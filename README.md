@@ -14,20 +14,20 @@
 
 1. **Склонируйте репозиторий**
     ```sh
-    git clone https://github.com/yourusername/yourproject.git
-    cd yourproject
+    git clone https://github.com/FieryArcher/ImageLoader.git
+    cd ImageLoader
     ```
 
 2. **Откройте проект в Xcode**
     ```sh
-    open yourproject.xcodeproj
+    open ImageLoader.xcodeproj
     ```
 
 3. **Установите зависимости**
     Если проект использует CocoaPods, выполните:
     ```sh
     pod install
-    open yourproject.xcworkspace
+    open ImageLoader.xcworkspace
     ```
 
 4. **Запуск проекта**
