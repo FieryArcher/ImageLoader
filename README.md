@@ -24,10 +24,10 @@
     ```
 
 3. **Установите зависимости**
-   ##### Проект использует `SPM (Swift package manager)`, поэтому выполните слудующие действия:
+   * Проект использует `SPM (Swift package manager)`, поэтому выполните слудующие действия:
        - Откройте конфигурация проекта, и во вкладке `General` найдите `Frameworks, Libraries, and Embedded Content`.
        - Нажмите на иконку плюс и нажмите `Add Package Dependency...`.
-       - По ссылке https://github.com/SnapKit/SnapKit.git скачайте библиотеку `SnapKit` и добавьте в проект.
+       - По ссылке скачайте библиотеку [`SnapKit`](https://github.com/SnapKit/SnapKit.git) и добавьте в проект.
    
 
 5. **Запуск проекта**
