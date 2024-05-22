@@ -18,6 +18,8 @@ class ViewController: UIViewController {
     let pageSize = 12
     var isLoading = false
     
+    var hasErrorBeenShown = false
+
     let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     private lazy var dataService = DataService.shared
@@ -29,19 +31,46 @@ class ViewController: UIViewController {
             
             switch result {
             case .success(let data):
-                self.models = data
-                self.paginationModels = Array(models.prefix(self.pageSize))
-                self.currentPage = 1
-                
-                DispatchQueue.main.async{
-                    self.collectionView.reloadData()
-                }
+                self.handleData(data)
             case .failure(let error):
-                print(String(describing: error))
+                self.handleError(error)
             }
         })
-            
     }
+    
+    func handleData(_ data: [ItemModel]) {
+        self.models = data
+        self.paginationModels = Array(models.prefix(self.pageSize))
+        self.currentPage = 1
+        
+        DispatchQueue.main.async{
+            self.collectionView.reloadData()
+        }
+        print("Data received: \(data)")
+        hasErrorBeenShown = false
+    }
+    
+    func handleError(_ error: Error) {
+        logError(error)
+        if !hasErrorBeenShown {
+            presentError(error, in: self)
+            hasErrorBeenShown = true
+        }
+    }
+    
+    func presentError(_ error: Error, in viewController: UIViewController) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            self?.hasErrorBeenShown = false
+        }
+        alert.addAction(okAction)
+        viewController.present(alert, animated: true, completion: nil)
+    }
+    
+    func logError(_ error: Error) {
+        print("Error occurred: \(error.localizedDescription)")
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,10 +111,10 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedURL = paginationModels[indexPath.item].url // Здесь получаем картинку из данных
+        let selectedURL = paginationModels[indexPath.item].url
         
         let imageViewController = ImageViewController()
-        imageViewController.modalPresentationStyle = .fullScreen
+        imageViewController.modalPresentationStyle = .formSheet
         imageViewController.url = selectedURL
         
         present(imageViewController, animated: true, completion: nil)
@@ -110,14 +139,14 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         let screenHeight = UIScreen.main.bounds.height
         let isPortrait = screenWidth < screenHeight
         let itemsPerRow: CGFloat = isPortrait ? 1 : 3
-        let paddingSpace = 10 * (itemsPerRow + 1) // Assuming 10 points spacing between items
+        let paddingSpace = 10 * (itemsPerRow + 1)
         let availableWidth = collectionView.bounds.width - paddingSpace
         let widthPerItem: CGFloat
         let heightPerItem: CGFloat
         
         if isPortrait {
             widthPerItem = availableWidth
-            heightPerItem = widthPerItem / 1.5 // Assuming width is 1.5 times greater than height in portrait mode
+            heightPerItem = widthPerItem / 1.5
         } else {
             let squareSide = availableWidth / itemsPerRow
             widthPerItem = squareSide
@@ -128,11 +157,11 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10 // Spacing between rows
+        return 10
     }
-//    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10 // Spacing between items
+        return 10
     }
 }
 
@@ -141,7 +170,6 @@ extension ViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if shouldLoadMoreData() && !isLoading {
-//            collectionView.reloadSections(IndexSet(integer: 0))  // Force the collection view to update the footer
             loadMoreData()
         }
     }
@@ -157,7 +185,6 @@ extension ViewController: UIScrollViewDelegate {
             let endIndex = min(startIndex + self.pageSize, self.models.count)
             let newData = Array(self.models[startIndex..<endIndex])
             
-//            self.paginationModels.append(contentsOf: newData)
             self.currentPage += 1
             
             DispatchQueue.main.async {
