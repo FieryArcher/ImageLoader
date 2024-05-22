@@ -24,13 +24,13 @@
     ```
 
 3. **Установите зависимости**
-    Если проект использует CocoaPods, выполните:
-    ```sh
-    pod install
-    open ImageLoader.xcworkspace
-    ```
+    Проект использует `SPM (Swift package manager)`, поэтому выполните слудующие действия:
+   - Откройте конфигурация проекта, и во вкладке `General` найдите `Frameworks, Libraries, and Embedded Content`
+   - Нажмите на иконку плюс и нажмите `Add Package Dependency...`
+   - По ссылке https://github.com/SnapKit/SnapKit.git скачайте библиотеку `SnapKit` и добавьте в проект
+   
 
-4. **Запуск проекта**
+5. **Запуск проекта**
     - Выберите целевое устройство или симулятор в Xcode.
     - Нажмите кнопку "Run" (или используйте сочетание клавиш `Cmd + R`).
 
